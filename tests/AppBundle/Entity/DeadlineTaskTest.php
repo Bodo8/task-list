@@ -25,7 +25,7 @@ class DeadlineTaskTest extends TestCase
         $expectedMonth = 12;
         $expectedWeek = 51;
         $expectedDay = 19;
-        $deadLineTask = new DeadLineTask($expectedYear, $expectedMonth,
+        $deadLineTask = new DeadlineTask($expectedYear, $expectedMonth,
             $expectedWeek, $expectedDay, $this->task);
         $actualYear = $deadLineTask->getYear();
         $actualMonth = $deadLineTask->getMonth();

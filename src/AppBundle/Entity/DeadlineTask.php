@@ -9,7 +9,7 @@
 namespace AppBundle\Entity;
 
 
-class DeadLineTask
+class DeadlineTask
 {
     private $year;
     private $month;
@@ -18,7 +18,7 @@ class DeadLineTask
     private $task;
 
     /**
-     * DeadLineTask constructor.
+     * DeadlineTask constructor.
      * @param $year
      * @param $month
      * @param $week
