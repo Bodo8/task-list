@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 class TaskTest extends TestCase
 {
 
-
     public function testCreateTask()
     {
         $expectDescription = "to buy bread";
@@ -24,5 +23,4 @@ class TaskTest extends TestCase
         $this->assertEquals($expectDescription, $actualDescription);
         $this->assertEquals($expectedId, $actualId);
     }
-
 }

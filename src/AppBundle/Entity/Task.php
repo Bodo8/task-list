@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 
 class Task
 {
-
     private $taskId;
     private $description;
     private $importantTask;
@@ -16,11 +15,13 @@ class Task
      * @param $description
      * @param $importantTask
      */
-    public function __construct(int $taskId, string $description, bool $importantTask)
+    public function __construct($taskId = null, string $description, bool $importantTask)
     {
-        $this->taskId = $taskId;
         $this->description = $description;
         $this->importantTask = $importantTask;
+        if ($taskId) {
+            $this->taskId = $taskId;
+        }
     }
 
     /**

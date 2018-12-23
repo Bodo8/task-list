@@ -15,6 +15,7 @@ use AppBundle\Entity\Task;
 
 class InMemory implements LoaderToDatabase
 {
+    private $deadlineTaskList = [];
 
     public function saveTask(DeadlineTask $deadlineTask)
     {
