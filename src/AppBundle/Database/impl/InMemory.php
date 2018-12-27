@@ -10,40 +10,71 @@ namespace AppBundle\Database\impl;
 
 
 use AppBundle\Database\LoaderToDatabase;
+use AppBundle\Entity\DeadlineFactory;
 use AppBundle\Entity\DeadlineTask;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskFactory;
 
 class InMemory implements LoaderToDatabase
 {
-    private $deadlineTaskList = [];
+    private $deadlineTaskTab;
 
-    public function saveTask(DeadlineTask $deadlineTask)
+    /**
+     * InMemory constructor.
+     */
+    public function __construct()
     {
-        // TODO: Implement saveTask() method.
+        $this->deadlineTaskTab = [];
     }
 
-    public function updateTask(DeadlineTask $deadlineTask)
+    public function saveTask(int $year, int $month, int $week, int $day, Task $task)
     {
-        // TODO: Implement updateTask() method.
+
+        $isImportantTask = $task->isImportantTask();
+        if (!isset($this->deadlineTaskTab[$year] [$month] [$week] [$day] [0])) {
+            $this->deadlineTaskTab = [$year => [$month => [$week =>
+                    [$day => [$task]]]]] + $this->deadlineTaskTab;
+        } else {
+            if ($isImportantTask) {
+                array_unshift($this->deadlineTaskTab[$year] [$month] [$week]
+                [$day], $task);
+            } else {
+                array_push($this->deadlineTaskTab[$year] [$month] [$week]
+                [$day], $task);
+            }
+        }
     }
 
-    public function deleteTask(int $deadlineTask)
+    public function updateTask(int $year, int $month, int $week, int $day, Task $oldTask, Task $task)
     {
-        // TODO: Implement deleteTask() method.
+        $this->deleteTask($year, $month, $week, $day, $oldTask);
+        $this->saveTask($year, $month, $week, $day, $task);
+    }
+
+    public function deleteTask(int $year, int $month, int $week, int $day, Task $task)
+    {
+        $indexForDelete = array_search($task, $this->deadlineTaskTab [$year] [$month] [$week] [$day]);
+        unset($this->deadlineTaskTab [$year] [$month] [$week] [$day][$indexForDelete]);
     }
 
     public function createDeadlineTask(int $year, int $month, int $week, int $day, Task $task): DeadlineTask
     {
-        // TODO: Implement createDeadlineTask() method.
+        $director = DeadlineFactory::director();
+        $deadlineTask = $director->createWithParameters($year, $month,
+            $week, $day, $task);
+        return $deadlineTask;
     }
 
-    public function createTask(int $taskId, string $description, bool $importantTask): Task
+    public function createTask(int $taskId, string $description,
+                               bool $importantTask): Task
     {
-        // TODO: Implement createTask() method.
+        $director = TaskFactory::director();
+        $task = $director->createWithId($taskId, $description, $importantTask);
+        return $task;
     }
 
     public function getAllTask(): array
     {
-        // TODO: Implement getAllTask() method.
+        return $this->deadlineTaskTab;
     }
 }

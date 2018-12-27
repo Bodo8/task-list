@@ -14,11 +14,11 @@ use AppBundle\Entity\Task;
 
 interface LoaderToDatabase
 {
-    public function saveTask(DeadlineTask $deadlineTask);
+    public function saveTask(int $year, int $month, int $week, int $day, Task $task);
 
-    public function updateTask(DeadlineTask $deadlineTask);
+    public function updateTask(int $year, int $month, int $week, int $day, Task $oldTask, Task $task);
 
-    public function deleteTask(int $deadlineTask);
+    public function deleteTask(int $year, int $month, int $week, int $day, Task $task);
 
     public function createDeadlineTask(int $year, int $month, int $week,
                                        int $day, Task $task): DeadlineTask;

@@ -13,19 +13,40 @@ use PHPUnit\Framework\TestCase;
 class InMemoryTest extends TestCase
 {
 
-    public function testSaveTask()
+    public function testSaveOneTask()
     {
-
-    }
-
-    public function testCreateTask()
-    {
+        $year = 2018;
+        $month = 12;
+        $week = 51;
+        $day = 22;
         $inMemory = new InMemory();
         $task = $inMemory->createTask(1, "to buy butter", true);
-        $deadlineTask = $inMemory->createDeadlineTask(2018, 12, 51, 22, $task);
-        $inMemory->saveTask($deadlineTask);
+        $inMemory->saveTask($year, $month, $week, $day, $task);
         $allTask = $inMemory->getAllTask();
-        $actualTask = $allTask[0];
+        $actualTask = $allTask[$year][$month][$week][$day][0];
         $this->assertEquals($task, $actualTask);
     }
+
+    public function testDeleteTask()
+    {
+        $year = 2018;
+        $month = 12;
+        $week = 51;
+        $day = 22;
+        $inMemory = new InMemory();
+        $task = $inMemory->createTask(1, "to buy some", false);
+        $task1 = $inMemory->createTask(2, "to buy butter", false);
+        $task2 = $inMemory->createTask(3, "to buy milk", true);
+        $inMemory->saveTask($year, $month, $week, $day, $task1);
+        $inMemory->saveTask($year, $month, $week, $day, $task);
+        $inMemory->saveTask($year, $month, $week, $day, $task2);
+        $inMemory->deleteTask($year, $month, $week, $day, $task);
+
+        $tabTasks = $inMemory->getAllTask();
+        $daysTab = $tabTasks [$year] [$month] [$week] [$day];
+        $actualSizeTab = count($daysTab);
+        $this->assertEquals(2, $actualSizeTab);
+
+    }
+
 }

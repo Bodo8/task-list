@@ -33,28 +33,11 @@ class Task
     }
 
     /**
-     * @param int $taskId
-     */
-    public function setTaskId(int $taskId): void
-    {
-        $this->taskId = $taskId;
-    }
-
-
-    /**
      * @return string
      */
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
     }
 
     /**
@@ -64,14 +47,5 @@ class Task
     {
         return $this->importantTask;
     }
-
-    /**
-     * @param bool $importantTask
-     */
-    public function setImportantTask(bool $importantTask): void
-    {
-        $this->importantTask = $importantTask;
-    }
-
 
 }
