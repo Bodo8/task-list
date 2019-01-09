@@ -1,102 +1,223 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <h3>My task list</h3>
 
     <div id="choiceYear">
 
         <button type="button" class="btn btn-outline-success dropdown-toggle"
-                style="justify-content: left" data-toggle="dropdown">2018
+                style="justify-content: left" data-toggle="dropdown">
+            <a id="yearButton"></a>
         </button>
 
         <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">2019</a>
-            <a class="dropdown-item" href="#">2020</a>
+            <a class="dropdown-item" href="#">
+                <p id="nextYearButt" onclick="setCurrentYear(1)"></p>
+            </a>
+            <a class="dropdown-item" href="#">
+                <p id="afterNextYearButt" onclick="setCurrentYear(2)"></p>
+            </a>
         </div>
     </div>
+
+
     <div id="choiceMonth">
         <div class="container"></div>
         <ul class="pagination justify-content-center">
-            <li class="page-item"><a class="page-link" href="#"> < </a></li>
-            <li class="page-item"><a class="page-link" href="#">November</a></li>
-            <li class="page-item active"><a class="page-link" href="#">December</a></li>
-            <li class="page-item"><a class="page-link" href="#">January</a></li>
-            <li class="page-item"><a class="page-link" href="#"> > </a></li>
+            <li class="page-item" onclick="prevCurrentMonth()"><a class="page-link" href="#"> < </a></li>
+            <li class="page-item"><a class="page-link" href="#"><p id="firstMonth" style="margin-bottom: 0"></p>
+                </a></li>
+            <li class="page-item active"><a class="page-link" href="#"><p id="activeMonth" style="margin-bottom: 0"></p>
+                </a></li>
+            <li class="page-item"><a class="page-link" href="#"><p id="nextMonth" style="margin-bottom: 0"></p></a></li>
+            <li class="page-item" onclick="nextCurrentMonth()"><a class="page-link" href="#"> > </a></li>
 
         </ul>
 
     </div>
 
 
-    <div id="choicePeriods">
+    <div class="container" id="weekDays">
+        <div class="table-responsive" onload="createMonthTable()">
 
-        <div class="card">
-            <div class="card-header">
-                <a class="card-link" data-toggle="collapse" href="#periods">
-                    <p id="morePeriods">more periods</p>
-                </a>
-            </div>
-            <div id="periods" class="collapse" data-parent="#choicePeriods">
+            <div id="dayMonth" class="collapse" data-parent="#choicePeriods">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn-outline-success"
-                            onclick="changeBorder()">Week
-                    </button>
-                    <button type="button" class="btn-outline-success">Month</button>
-                    <button type="button" class="btn-outline-success">Day</button>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="weekDays">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Mon</th>
-                    <th>Tue</th>
-                    <th>Wed</th>
-                    <th>Thu</th>
-                    <th>Fri</th>
-                    <th>Sat</th>
-                    <th>Sun</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                    <td>6</td>
-                    <td>7</td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>9</td>
-                    <td>10</td>
-                    <td>11</td>
-                    <td>12</td>
-                    <td>13</td>
-                    <td>14</td>
-                </tr>
-                <tr>
-                    <td>15</td>
-                    <td>16</td>
-                    <td>17</td>
-                    <td>18</td>
-                    <td>19</td>
-                    <td>21</td>
-                    <td>22</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+    <script>
+
+        let todayDate = new Date();
+
+        let monthsName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        let currentDate = {
+            yearCurrent: todayDate.getFullYear(),
+            monthCurrent: todayDate.getMonth(),
+            weekCurrent: getWeekNumber(todayDate),
+            dayCurrent: todayDate.getDate(),
+        };
+
+        function addOneYear(previousYear, numberYear) {
+            return previousYear + numberYear;
+        }
+
+        function prevMonthPag(actualMonth) {
+            if (actualMonth == 0) {
+                return monthsName[11]
+            } else {
+                return monthsName[actualMonth - 1];
+            }
+        }
+
+        function nextMonthPag(actualMonth) {
+            if (actualMonth == 11) {
+                return monthsName[0]
+            } else {
+                return monthsName[actualMonth + 1];
+            }
+        }
+
+        function getCurrentDate() {
+            let dateTab = [];
+            dateTab["actualYear"] = currentDate.yearCurrent;
+            dateTab["actualMonth"] = currentDate.monthCurrent;
+            dateTab["actualWeek"] = currentDate.weekCurrent;
+            dateTab["actualDay"] = currentDate.dayCurrent;
+            return dateTab;
+        }
+
+        function nextCurrentMonth() {
+            let dateTab = getCurrentDate();
+            let actualMonth = dateTab["actualMonth"];
+            let actualYear = dateTab["actualYear"];
+            if (actualMonth > 10) {
+                actualMonth = -1;
+                actualYear += 1;
+            }
+            currentDate = {
+                yearCurrent: actualYear,
+                monthCurrent: actualMonth + 1,
+                weekCurrent: dateTab["actualWeek"],
+                dayCurrent: dateTab["actualDay"],
+            };
+            showPagination();
+            showYearButton();
+        }
+
+        function prevCurrentMonth() {
+            let dateTab = getCurrentDate();
+            let actualMonth = dateTab["actualMonth"];
+            let actualYear = dateTab["actualYear"];
+            if (actualMonth < 1) {
+                actualMonth = 12;
+                actualYear -= 1;
+            }
+            currentDate = {
+                yearCurrent: actualYear,
+                monthCurrent: actualMonth - 1,
+                weekCurrent: dateTab["actualWeek"],
+                dayCurrent: dateTab["actualDay"],
+            };
+            showPagination();
+            showYearButton();
+        }
+
+        function setCurrentYear(numberYear) {
+            let dateTab = getCurrentDate();
+            let actualYear = dateTab["actualYear"]
+
+            currentDate = {
+                yearCurrent: actualYear + numberYear,
+                monthCurrent: dateTab["actualMonth"],
+                weekCurrent: dateTab["actualWeek"],
+                dayCurrent: dateTab["actualDay"],
+            };
+            showYearButton();
+        }
 
 
+        function showPagination() {
+            document.getElementById("firstMonth").innerHTML = prevMonthPag(currentDate.monthCurrent);
+            document.getElementById("activeMonth").innerHTML = monthsName[currentDate.monthCurrent];
+            document.getElementById("nextMonth").innerHTML = nextMonthPag(currentDate.monthCurrent);
+        }
+
+        function showYearButton() {
+            document.getElementById("yearButton").innerHTML = currentDate.yearCurrent;
+            document.getElementById("nextYearButt").innerHTML = addOneYear(currentDate.yearCurrent, 1);
+            document.getElementById("afterNextYearButt").innerHTML = addOneYear(currentDate.yearCurrent, 2);
+
+        }
+
+        function createMonthTable() {
+            let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            document.write('<table class=\"table\">');
+            document.write('<thead>');
+            document.write('<tr>');
+
+            for (let i = 0; i < 7; i++) {
+                document.write('<th>');
+                document.write(days[i]);
+                document.write('</th>')
+            }
+
+            document.write('</tr>');
+            document.write('<thead>');
+            document.write('<tbody>');
+
+
+            let week = 0;
+            for (let m = 0; m < 5; m++) {
+                document.write('<tr>');
+                if (m > 0) {
+                    week += 7
+                }
+                for (let k = (1 + week); k < (8 + week); k++) {
+                    document.write('<td>');
+                    document.write('<button type="button" class="btn btn-outline-success">');
+                    document.write(k);
+                    document.write('</button>');
+                    document.write('</td>');
+                }
+                document.write('</tr>');
+            }
+            document.write('</tbody>');
+            document.write('</table>')
+        }
+
+        createMonthTable();
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+            let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            let weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        }
+
+        let dateCheckWeek = new Date(currentDate.yearCurrent, currentDate.monthCurrent, currentDate.dayCurrent);
+        let result = getWeekNumber(dateCheckWeek);
+        document.write('It\'s currently week ' + result);
+
+
+        document.getElementById("yearButton").innerHTML = currentDate.yearCurrent;
+        document.getElementById("nextYearButt").innerHTML = addOneYear(currentDate.yearCurrent, 1);
+        document.getElementById("afterNextYearButt").innerHTML = addOneYear(currentDate.yearCurrent, 2);
+
+        document.getElementById("firstMonth").innerHTML = prevMonthPag(currentDate.monthCurrent);
+        document.getElementById("activeMonth").innerHTML = monthsName[currentDate.monthCurrent];
+        document.getElementById("nextMonth").innerHTML = nextMonthPag(currentDate.monthCurrent);
+
+    </script>
+
+
+    <link rel="stylesheet" href="{{ asset('assets/css/yearWeek.css') }}">
     <script src="{{ asset('assets/js/yearWeek.js') }}"></script>
-
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -107,8 +228,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
+
+
 {% endblock %}
 
         {% block javascripts %}
 
-{% endblock %}
+
+
+        {% endblock %}
