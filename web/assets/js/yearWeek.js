@@ -1,4 +1,3 @@
-require('../css/app.css');
 
 let todayDate = new Date();
 
